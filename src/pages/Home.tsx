@@ -1,15 +1,27 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Sparkles, FolderGit2, Mail } from 'lucide-react'
 import { useGitHubRepos } from '@/hooks/useGitHub'
+import { useFeaturedProjects } from '@/hooks/useFeaturedProjects'
 import { ProjectCard } from '@/components/projects/ProjectCard'
 import { ProjectCardSkeleton } from '@/components/projects/ProjectCardSkeleton'
 
 export const Home: React.FC = () => {
-  const { data: repos, isLoading } = useGitHubRepos()
+  const { data: repos, isLoading: isReposLoading } = useGitHubRepos()
+  const { featuredProjects, isLoading: isFeaturedLoading } = useFeaturedProjects()
 
-  // Seleciona os 3 projetos mais recentes para a vitrine da Home
-  const featuredRepos = repos?.slice(0, 3) || []
+  const isLoading = isReposLoading || isFeaturedLoading
+
+  // Filtra dinamicamente os projetos escolhidos no Dashboard como destaques
+  const displayedProjects = useMemo(() => {
+    if (!repos) return []
+    const selected = repos.filter(repo => featuredProjects.includes(repo.name))
+    // Fallback: se ainda não houver nenhum selecionado, exibe os 3 mais recentes
+    if (selected.length === 0) {
+      return repos.slice(0, 3)
+    }
+    return selected
+  }, [repos, featuredProjects])
 
   return (
     <div className="space-y-16">
@@ -57,7 +69,7 @@ export const Home: React.FC = () => {
               Projetos em Destaque
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Repositórios carregados diretamente do meu GitHub via API.
+              Projetos selecionados pelo proprietário no Dashboard administrativo.
             </p>
           </div>
           <Link
@@ -78,7 +90,7 @@ export const Home: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredRepos.map(repo => (
+            {displayedProjects.map(repo => (
               <ProjectCard key={repo.id} repo={repo} />
             ))}
           </div>

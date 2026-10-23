@@ -26,3 +26,4 @@ export interface ContactMessage extends ContactFormData {
   created_at: string
   status: 'unread' | 'replied'
 }
+

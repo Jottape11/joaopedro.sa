@@ -120,3 +120,4 @@ export async function sendContactEmail(data: ContactFormData): Promise<{ success
     message: 'Sua mensagem foi enviada com sucesso e já está disponível no painel do proprietário!',
   }
 }
+
