@@ -15,3 +15,4 @@ export interface GitHubRepo {
   archived: boolean
   default_branch: string
 }
+

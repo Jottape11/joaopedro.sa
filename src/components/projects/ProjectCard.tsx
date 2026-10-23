@@ -92,3 +92,4 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ repo }) => {
     </article>
   )
 }
+
