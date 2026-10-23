@@ -11,4 +11,18 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/@supabase')) {
+            return 'supabase'
+          }
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons'
+          }
+        },
+      },
+    },
+  },
 })

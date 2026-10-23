@@ -12,3 +12,4 @@ export const SuspenseWrapper: React.FC<{ children: React.ReactNode }> = ({ child
     {children}
   </Suspense>
 )
+
