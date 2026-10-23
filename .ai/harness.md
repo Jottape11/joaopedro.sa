@@ -12,7 +12,7 @@ Este documento descreve a governança, as ferramentas, os modelos e as regras es
   - Janela de contexto massiva que permite ler simultaneamente o edital do projeto (Notion), os slides da disciplina da FIAP e o código-fonte sem perda de memória.
   - Baixa latência e alta precisão para refatoração de código TypeScript/React.
   - Capacidade nativa de pair-programming com execução de comandos, testes e linting via terminal integrado.
-  - Além de ter o plano de estudante para acesso da ferramenta por um custo extremamente baixo em comparação as outras IAs
+  - Além de ter o plano de estudante para acesso da ferramenta por um custo extremamente baixo em comparação as outras IAs.
 
 ---
 
