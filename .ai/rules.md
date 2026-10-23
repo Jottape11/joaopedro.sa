@@ -6,3 +6,4 @@ Ao interagir neste repositório:
 3. Respeite os 12 requisitos obrigatórios do edital do CP3.
 4. Mantenha os componentes pequenos e com responsabilidade única.
 5. Emita mensagens de commit no padrão Conventional Commits em português ou inglês padronizado.
+
