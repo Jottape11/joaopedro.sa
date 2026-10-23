@@ -1,8 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Code, Sparkles, FolderGit2, Mail, ExternalLink } from 'lucide-react'
+import { ArrowRight, Sparkles, FolderGit2, Mail } from 'lucide-react'
+import { useGitHubRepos } from '@/hooks/useGitHub'
+import { ProjectCard } from '@/components/projects/ProjectCard'
+import { ProjectCardSkeleton } from '@/components/projects/ProjectCardSkeleton'
 
 export const Home: React.FC = () => {
+  const { data: repos, isLoading } = useGitHubRepos()
+
+  // Seleciona os 3 projetos mais recentes para a vitrine da Home
+  const featuredRepos = repos?.slice(0, 3) || []
+
   return (
     <div className="space-y-16">
       {/* Hero Section */}
@@ -41,7 +49,7 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Projects Teaser (Placeholder que conectaremos na Fase 3 e 5) */}
+      {/* Featured Projects Section */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -49,7 +57,7 @@ export const Home: React.FC = () => {
               Projetos em Destaque
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Projetos selecionados diretamente do meu repositório do GitHub.
+              Repositórios carregados diretamente do meu GitHub via API.
             </p>
           </div>
           <Link
@@ -61,41 +69,20 @@ export const Home: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Card placeholder demonstrativo antes da integração com API na Fase 3 */}
-          {['fastapi-game-center', 'steam-store-analytics', 'eco-impacto-brasil-portal'].map((repo, idx) => (
-            <div
-              key={repo}
-              className="p-6 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/60 flex flex-col justify-between hover:border-blue-500/50 transition-all shadow-sm"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                    <Code className="w-4 h-4" />
-                  </div>
-                  <span className="text-xs font-mono font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
-                    {idx === 0 ? 'Python' : idx === 1 ? 'Data/API' : 'TypeScript'}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-lg text-zinc-900 dark:text-zinc-100">{repo}</h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
-                  Carregamento dinâmico em desenvolvimento para a Fase 3 com dados oficiais do GitHub.
-                </p>
-              </div>
-
-              <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs font-medium">
-                <Link
-                  to={`/projetos/${repo}`}
-                  className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
-                >
-                  <span>Detalhes</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </Link>
-                <span className="text-zinc-400">Destaque</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Loading state or cards */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredRepos.map(repo => (
+              <ProjectCard key={repo.id} repo={repo} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )
