@@ -1,68 +1,67 @@
 # 🤖 Harness de Engenharia de IA - CP3 WebDev
-
-Este documento descreve a governança, as ferramentas, os modelos e as regras estabelecidas para guiar os agentes de Inteligência Artificial durante o desenvolvimento deste portfólio.
+> **Governança, Diretrizes e Workflow de Desenvolvimento Orientado a IA**  
+> **Projeto:** CP3 - Portfolio, Stack & Harness Engineering (FIAP)  
+> **Autor:** João Pedro Sá
 
 ---
 
 ## 1. Ferramenta & Modelo Utilizados
 
-* **Ambiente / Ferramenta:** Google Antigravity Agentic IDE.
+* **Ambiente de Engenharia:** Google Antigravity Agentic IDE.
 * **Modelo Principal:** Gemini 3.8 Flash (High Reasoning) / Gemini 3.8 Pro.
 * **Justificativa da Escolha:**
-  - Janela de contexto massiva que permite ler simultaneamente o edital do projeto (Notion), os slides da disciplina da FIAP e o código-fonte sem perda de memória.
-  - Baixa latência e alta precisão para refatoração de código TypeScript/React.
-  - Capacidade nativa de pair-programming com execução de comandos, testes e linting via terminal integrado.
-  - Além de ter o plano de estudante para acesso da ferramenta por um custo extremamente baixo em comparação as outras IAs.
+  - Janela de contexto massiva que permite correlacionar simultaneamente o edital oficial do Checkpoint 3, a árvore completa do código TypeScript e o esquema de banco sem perda de alinhamento.
+  - Baixa latência e rigor arquitetural para refatoração e otimização de bundle em React 19.
+  - Suporte nativo a execução autônoma de linters (`oxlint`), suítes de testes (`vitest`) e comandos de compilação sem intervenção manual repetitiva.
+  - Excelente custo-benefício com plano educacional.
 
 ---
 
 ## 2. Padrões de Arquitetura & Código
 
-Qualquer código gerado ou modificado pela IA DEVE seguir rigorosamente esta estrutura de pastas em `src/`:
+O desenvolvimento seguiu rigorosamente a seguinte estrutura em `src/`:
 
 ```
 src/
-├── assets/          # Imagens, SVGs e arquivos estáticos otimizados
-├── components/      # Componentes visuais pequenos e reaproveitáveis (Single Responsibility)
-│   ├── common/      # Botões, Badges, Modais, Toasts, Skeletons
-│   ├── layout/      # Navbar, Footer, Container, Sidebar
-│   └── projects/    # Cards de projeto, filtros, estados (loading/error/empty)
-├── pages/           # Componentes de visualização de página (conectados às rotas)
-│   ├── Home.tsx
-│   ├── Projects.tsx
-│   ├── ProjectDetails.tsx
-│   ├── Contact.tsx
-│   ├── Login.tsx
-│   ├── Dashboard.tsx
-│   └── NotFound.tsx
-├── hooks/           # Custom hooks encapsulando lógica de negócio (prefixo use...)
-├── services/        # Clientes de API desacoplados (GitHub API, Supabase, Email)
-├── context/         # Provedores de contexto React (ThemeContext, AuthContext)
-├── types/           # Interfaces e tipos estritos do TypeScript
-└── styles/          # Configurações globais de CSS / Tailwind
+├── assets/          # SVGs, ícones e recursos estáticos
+├── components/      # Componentes modulares com responsabilidade única
+│   ├── common/      # ThemeToggle, LanguagePicker, MarkdownRenderer, EmptyState, ErrorMessage
+│   ├── home/        # BillboardHero (Carrossel 5s), LolomoRail (Trilhos e Top 10)
+│   ├── layout/      # Navbar (com avatar e dropdowns), Footer (4 colunas Netflix), RootLayout
+│   └── projects/    # ProjectCard, ProjectQuickViewModal (Modal com leitor de README)
+├── pages/           # Visualizações de rotas SPA (Home, Projects, ProjectDetails, Contact, Login, Dashboard, NotFound)
+├── hooks/           # Custom hooks encapsulando lógica (useGitHub, useFeaturedProjects, useTheme, useLanguage, useAuth)
+├── services/        # Clientes desacoplados (github, projectImages, contact, supabase)
+├── context/         # Provedores de estado global (ThemeContext, LanguageContext, AuthContext)
+├── types/           # Interfaces TypeScript estritas (github, contact, project, theme, language, auth)
+└── test/            # Suíte de 19 testes automatizados com Vitest e Testing Library
 ```
 
-### Regras de Nomenclatura & Boas Práticas:
-- **Componentes:** Sempre em `PascalCase` (ex.: `ProjectCard.tsx`, `Navbar.tsx`).
-- **Hooks Customizados:** Sempre iniciando com `use` em `camelCase` (ex.: `useTheme.ts`, `useGitHubProjects.ts`).
-- **Funções e Variáveis:** `camelCase`.
-- **Tipagem Estrita:** Proibido o uso de `any`. Sempre definir interfaces ou types em `src/types/`.
-- **Separação de Camadas:** Nunca fazer chamadas `fetch` diretas dentro de componentes visuais; isolar sempre em `services/` ou `hooks/`.
+### Regras de Governança Aplicadas pela IA:
+1. **Tipagem Estrita:** Proibição de tipos `any`. Todos os retornos e props possuem tipagem estrita via interfaces TypeScript.
+2. **Separação de Camadas:** Zero chamadas `fetch` em componentes de apresentação; toda requisição é delegada a `services/` ou gerenciada por `hooks/` com TanStack Query.
+3. **Resiliência e Fallbacks:** Nenhuma falha de rede da API do GitHub ou do Supabase pode quebrar a tela do usuário. Tratamento com skeletons, empty states e fallback para LocalStorage.
+4. **Sem Alucinações de Conteúdo:** Todas as fotos utilizadas são fotografias reais autenticadas (Unsplash Key Art) sem textos embutidos nem caricaturas.
 
 ---
 
-## 3. Política de Versionamento & Git
+## 3. Qualidade Contínua & Testes Automatizados
 
-A IA e o desenvolvedor devem seguir a convenção de **Conventional Commits**:
+- **Linter em Rust:** `oxlint` configurado para execução instantânea, mantendo **0 warnings e 0 errors** em todos os ciclos de desenvolvimento.
+- **Suíte de Testes com Vitest:**
+  - 19 testes automatizados cobrindo esquemas de formulário (Zod), serviços de contato, alternância de tema, internacionalização (i18n), seletor de pôsteres e o parser de Markdown.
+  - Execução via `npm test` integrada ao pipeline.
 
-- `feat:` Nova funcionalidade para o usuário (ex.: `feat: adiciona card de projeto com skeleton de loading`).
-- `fix:` Correção de um bug (ex.: `fix: corrige redirecionamento de rota 404`).
-- `docs:` Alterações em documentação (ex.: `docs: atualiza README com instrucoes de deploy`).
-- `refactor:` Refatoração de código sem alterar comportamento externo.
-- `chore:` Atualizações de configuração, dependências e build.
+---
 
-### Estratégia de Branches:
-- `main`: Branch de produção conectada ao deploy contínuo da Vercel.
-- `feature/<nome-da-funcionalidade>`: Branches individuais para desenvolvimento de cada requisito (ex.: `feature/theme-switcher`, `feature/github-integration`, `feature/dashboard`).
-- `test/<nome>`: Branches dedicadas à cobertura de testes automatizados.
+## 4. Pipeline de Edição de Vídeo com Remotion.dev
 
+Para a gravação e entrega do vídeo de apresentação (Requisito 10):
+- **Abordagem:** Formato de **Entrevista Técnica Simulada** entre um Staff Engineer entrevistador e o candidato João Pedro.
+- **Edição Programática:** Composição em React através do [Remotion.dev](https://www.remotion.dev/), combinando layouts dinâmicos:
+  1. *Split-Screen:* Grade de videochamada sincronizada com indicadores de áudio.
+  2. *Interviewer-Cam:* Foco no personagem/avatar que conduz as perguntas do edital.
+  3. *Candidate-Cam:* Close no candidato explicando os trade-offs de engenharia com lower thirds.
+  4. *Screencast-PiP:* Gravação fluida da interface do portfólio rodando em tela cheia com a webcam no canto.
+  5. *Code-Inspector:* Destaque sintático nos arquivos-chave do repositório.
+- **Roteiro Cronometrado:** Documentado integralmente em [`docs/roteiro_entrevista_remotion.md`](../docs/roteiro_entrevista_remotion.md) para garantir duração precisa de até 07m45s.
