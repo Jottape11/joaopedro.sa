@@ -1,101 +1,149 @@
-import React, { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { ArrowRight, Sparkles, FolderGit2, Mail } from 'lucide-react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useGitHubRepos } from '@/hooks/useGitHub'
 import { useFeaturedProjects } from '@/hooks/useFeaturedProjects'
-import { ProjectCard } from '@/components/projects/ProjectCard'
-import { ProjectCardSkeleton } from '@/components/projects/ProjectCardSkeleton'
+import { useLanguage } from '@/hooks/useLanguage'
+import { BillboardHero } from '@/components/home/BillboardHero'
+import { LolomoRail } from '@/components/home/LolomoRail'
+import { ProjectQuickViewModal } from '@/components/projects/ProjectQuickViewModal'
+import type { GitHubRepo } from '@/types/github'
 
 export const Home: React.FC = () => {
+  const navigate = useNavigate()
+  const { t } = useLanguage()
   const { data: repos, isLoading: isReposLoading } = useGitHubRepos()
   const { featuredProjects, isLoading: isFeaturedLoading } = useFeaturedProjects()
 
+  const [modalRepo, setModalRepo] = useState<GitHubRepo | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Redireciona para o fluxo inicial de Cadastro/Login e Seleção de Perfil caso ainda não tenha entrado
+  useEffect(() => {
+    const hasSelected = localStorage.getItem('nf_profile_selected') === 'true'
+    if (!hasSelected) {
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
+
   const isLoading = isReposLoading || isFeaturedLoading
 
-  // Filtra dinamicamente os projetos escolhidos no Dashboard como destaques
-  const displayedProjects = useMemo(() => {
-    if (!repos) return []
+  const handleOpenDetails = (repo: GitHubRepo) => {
+    setModalRepo(repo)
+    setIsModalOpen(true)
+  }
+
+  // Projetos filtrados dinamicamente para o Billboard e Destaques
+  const billboardRepos = useMemo(() => {
+    if (!repos || repos.length === 0) return []
+    // Prioriza os projetos selecionados no Dashboard como destaques
     const selected = repos.filter(repo => featuredProjects.includes(repo.name))
-    // Fallback: se ainda não houver nenhum selecionado, exibe os 3 mais recentes
-    if (selected.length === 0) {
-      return repos.slice(0, 3)
-    }
-    return selected
+    if (selected.length > 0) return selected
+    // Fallback: primeiros 6 repositórios
+    return repos.slice(0, 6)
   }, [repos, featuredProjects])
 
+  // Top 10 Títulos (Ordenados por estrelas e relevância)
+  const top10Repos = useMemo(() => {
+    if (!repos || repos.length === 0) return []
+    return [...repos]
+      .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+      .slice(0, 10)
+  }, [repos])
+
+  // Séries de Back-End & Python
+  const pythonRepos = useMemo(() => {
+    if (!repos) return []
+    return repos.filter(
+      r =>
+        r.language?.toLowerCase() === 'python' ||
+        r.name.toLowerCase().includes('fastapi') ||
+        r.name.toLowerCase().includes('dps') ||
+        r.name.toLowerCase().includes('analytics'),
+    )
+  }, [repos])
+
+  // Front-End, React & UI Engineering
+  const frontendRepos = useMemo(() => {
+    if (!repos) return []
+    return repos.filter(
+      r =>
+        r.language?.toLowerCase() === 'react' ||
+        r.language?.toLowerCase() === 'typescript' ||
+        r.language?.toLowerCase() === 'javascript' ||
+        r.language?.toLowerCase() === 'css' ||
+        r.language?.toLowerCase() === 'html' ||
+        r.name.toLowerCase().includes('grid') ||
+        r.name.toLowerCase().includes('totem') ||
+        r.name.toLowerCase().includes('eco'),
+    )
+  }, [repos])
+
   return (
-    <div className="space-y-16">
-      {/* Hero Section */}
-      <section className="flex flex-col items-start gap-6 py-8 md:py-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Portfólio & Engenharia Front-end</span>
-        </div>
-
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 leading-[1.1]">
-          Construindo experiências digitais modernas, eficientes e escaláveis.
-        </h1>
-
-        <p className="text-lg sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
-          Olá! Sou o <strong className="text-zinc-900 dark:text-zinc-100 font-semibold">João Pedro</strong>, estudante de Engenharia de Software na FIAP. 
-          Especializado no ecossistema React, TypeScript, APIs REST e arquiteturas orientadas a performance e IA.
-        </p>
-
-        <div className="flex flex-wrap items-center gap-4 pt-2">
-          <Link
-            to="/projetos"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
-          >
-            <FolderGit2 className="w-4 h-4" />
-            <span>Ver Meus Projetos</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-
-          <Link
-            to="/contato"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-zinc-200 bg-white text-zinc-800 font-medium hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 transition-colors"
-          >
-            <Mail className="w-4 h-4" />
-            <span>Entrar em Contato</span>
-          </Link>
-        </div>
-      </section>
-
-      {/* Featured Projects Section */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Projetos em Destaque
-            </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Projetos selecionados pelo proprietário no Dashboard administrativo.
-            </p>
+    <div className="w-full bg-[var(--nf-bg)] text-[var(--nf-text)] space-y-6 sm:space-y-10 pb-16 transition-colors duration-200">
+      {/* ── 1. BILLBOARD HERO (BANNER PRINCIPAL COM ROTAÇÃO 5S + CONTROLES MANUAIS) ── */}
+      {isLoading ? (
+        <div className="w-full h-[520px] sm:h-[620px] bg-zinc-900 animate-pulse flex items-center justify-center">
+          <div className="text-zinc-500 font-mono text-sm">
+            {t.hero.loading}
           </div>
-          <Link
-            to="/projetos"
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 inline-flex items-center gap-1"
-          >
-            <span>Ver todos</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
+      ) : (
+        <BillboardHero
+          repos={billboardRepos}
+          onOpenDetails={handleOpenDetails}
+        />
+      )}
 
-        {/* Loading state or cards */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <ProjectCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayedProjects.map(repo => (
-              <ProjectCard key={repo.id} repo={repo} />
-            ))}
-          </div>
+      {/* ── 2. LOLOMO RAILS (TRILHOS HORIZONTAIS ESTILO NETFLIX) ── */}
+      <div className="space-y-6 sm:space-y-8 -mt-12 sm:-mt-16 relative z-20">
+        {/* Trilho 1: Top 10 no Brasil Hoje (com os números gigantes vazados) */}
+        {!isLoading && top10Repos.length > 0 && (
+          <LolomoRail
+            title={t.rails.top10Title}
+            subtitle={t.rails.top10Subtitle}
+            repos={top10Repos}
+            isTop10
+            onOpenDetails={handleOpenDetails}
+          />
         )}
-      </section>
+
+        {/* Trilho 2: Destaques Selecionados pelo Dono (Studio Picks) */}
+        {!isLoading && billboardRepos.length > 0 && (
+          <LolomoRail
+            title={t.rails.popularTitle}
+            subtitle={t.rails.popularSubtitle}
+            repos={billboardRepos}
+            onOpenDetails={handleOpenDetails}
+          />
+        )}
+
+        {/* Trilho 3: Séries de Back-End & Python */}
+        {!isLoading && pythonRepos.length > 0 && (
+          <LolomoRail
+            title={t.rails.backendTitle}
+            subtitle={t.rails.backendSubtitle}
+            repos={pythonRepos}
+            onOpenDetails={handleOpenDetails}
+          />
+        )}
+
+        {/* Trilho 4: Front-End & UI Engineering */}
+        {!isLoading && frontendRepos.length > 0 && (
+          <LolomoRail
+            title={t.rails.frontendTitle}
+            subtitle={t.rails.frontendSubtitle}
+            repos={frontendRepos}
+            onOpenDetails={handleOpenDetails}
+          />
+        )}
+      </div>
+
+      {/* ── 3. MODAL DE VISUALIZAÇÃO RÁPIDA (DETAIL SHEET ESTILO NETFLIX) ── */}
+      <ProjectQuickViewModal
+        repo={modalRepo}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   )
 }

@@ -110,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // 2. Fluxo de Demonstração / Offline (Permite avaliação imediata do professor)
-      await new Promise(resolve => setTimeout(resolve, 600)) // Simula resposta de rede
+      await new Promise(resolve => setTimeout(resolve, 500))
 
       const isValidDemoAdmin =
         (email === 'admin@joaopedro.dev' && password === 'admin123') ||
@@ -120,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const demoUser: AuthUser = {
           id: 'admin-demo-id',
           email,
-          name: email === 'admin@joaopedro.dev' ? 'João Pedro' : 'Avaliador',
+          name: email === 'admin@joaopedro.dev' ? 'João Pedro' : email.split('@')[0],
         }
         setUser(demoUser)
         localStorage.setItem(LOCAL_AUTH_TOKEN_KEY, 'demo_jwt_token_' + Date.now())
@@ -138,6 +138,65 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [isCloudConnected],
   )
 
+  const register = useCallback(
+    async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+      setIsLoading(true)
+
+      // 1. Fluxo oficial com Supabase Auth
+      if (isCloudConnected && supabase) {
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { name },
+            },
+          })
+
+          if (error) {
+            setIsLoading(false)
+            return { success: false, error: error.message }
+          }
+
+          if (data.user) {
+            const newUser: AuthUser = {
+              id: data.user.id,
+              email: data.user.email || email,
+              name,
+            }
+            setUser(newUser)
+            if (data.session) {
+              localStorage.setItem(LOCAL_AUTH_TOKEN_KEY, data.session.access_token)
+            }
+            setIsLoading(false)
+            return { success: true }
+          }
+        } catch (err) {
+          setIsLoading(false)
+          return {
+            success: false,
+            error: err instanceof Error ? err.message : 'Falha ao registrar conta no Supabase.',
+          }
+        }
+      }
+
+      // 2. Fluxo de Demonstração / Local
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      const newUser: AuthUser = {
+        id: 'registered-user-' + Date.now(),
+        email,
+        name: name.trim() || email.split('@')[0],
+      }
+      setUser(newUser)
+      localStorage.setItem(LOCAL_AUTH_TOKEN_KEY, 'demo_registered_token_' + Date.now())
+      localStorage.setItem(LOCAL_AUTH_USER_KEY, JSON.stringify(newUser))
+      setIsLoading(false)
+      return { success: true }
+    },
+    [isCloudConnected],
+  )
+
   const logout = useCallback(async () => {
     setIsLoading(true)
     if (isCloudConnected && supabase) {
@@ -149,6 +208,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     localStorage.removeItem(LOCAL_AUTH_TOKEN_KEY)
     localStorage.removeItem(LOCAL_AUTH_USER_KEY)
+    localStorage.removeItem('nf_profile_selected')
     setUser(null)
     setIsLoading(false)
   }, [isCloudConnected])
@@ -161,6 +221,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         isCloudConnected,
         login,
+        register,
         logout,
       }}
     >

@@ -1,0 +1,418 @@
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import { LanguageContext, type Language, type Translations } from './languageContextDef'
+
+const STORAGE_LANG_KEY = 'cp3_portfolio_lang'
+
+const ptTranslations: Translations = {
+  nav: {
+    home: 'Início',
+    projects: 'Séries & Projetos',
+    contact: 'Contato',
+    dashboard: 'Minha Lista (Studio)',
+    searchPlaceholder: 'Buscar projetos, linguagens, stacks...',
+    switchProfile: 'Trocar de Perfil',
+    signOut: 'Sair da Sessão',
+    signIn: 'Entrar',
+    studioAccount: 'Conta Studio',
+  },
+  auth: {
+    signInTab: 'Entrar',
+    signUpTab: 'Cadastrar',
+    whosWatchingTab: 'Quem está assistindo?',
+    signInTitle: 'Entrar no Studio',
+    signInSubtitle: 'Acesse o portal para curadoria técnica, gestão de títulos e métricas.',
+    signUpTitle: 'Criar Conta no Studio',
+    signUpSubtitle: 'Cadastre-se para personalizar sua experiência, salvar títulos e receber releases.',
+    nameLabel: 'Nome Completo',
+    emailLabel: 'E-mail',
+    passwordLabel: 'Senha',
+    confirmPasswordLabel: 'Confirmar Senha',
+    rememberMe: 'Lembrar de mim',
+    signInButton: 'Entrar no Studio',
+    signUpButton: 'Concluir Cadastro',
+    authenticating: 'Autenticando sessão...',
+    creatingAccount: 'Criando seu acesso...',
+    demoButton: 'Preencher credenciais para avaliação (1-Click)',
+    guestButton: 'Entrar como Visitante',
+    alreadyHaveAccount: 'Já tem uma conta no Studio?',
+    dontHaveAccount: 'Novo por aqui?',
+    signUpNow: 'Cadastre-se agora.',
+    signInNow: 'Entre com sua conta.',
+    baasProvider: 'BaaS Provider:',
+    supabaseCloud: 'Supabase Nuvem',
+    demoMode: 'Modo Demonstração',
+    backToHome: 'Voltar ao catálogo principal',
+    passwordMismatch: 'As senhas não coincidem. Digite novamente.',
+    accountCreatedSuccess: 'Conta criada com sucesso! Escolha seu perfil para continuar.',
+  },
+  profiles: {
+    title: 'Quem está assistindo?',
+    subtitle: 'Escolha um perfil para adaptar o catálogo e os trilhos técnicos às suas preferências:',
+    manageButton: 'Gerenciar Perfis',
+    doneButton: 'Concluído',
+    clickToEnter: 'Clique para acessar o catálogo',
+    list: {
+      recruiter: {
+        title: 'Recrutador(a)',
+        subtitle: 'RH, Avaliação Técnica & Contratação',
+        badge: 'VISÃO EXECUTIVA',
+      },
+      engineer: {
+        title: 'Engenheiro(a)',
+        subtitle: 'Arquitetura, Código Limpo, Testes & APIs',
+        badge: 'CÓDIGO & TECH',
+      },
+      fiap: {
+        title: 'Avaliador FIAP',
+        subtitle: 'Critérios do Checkpoint 3 & Excelência Web',
+        badge: 'PROFESSOR & NOTA 10',
+      },
+      admin: {
+        title: 'Dono / Studio Admin',
+        subtitle: 'Curadoria dos Títulos & Gestão de Contatos',
+        badge: 'CONTROLE TOTAL',
+      },
+      guest: {
+        title: 'Visitante / Convidado',
+        subtitle: 'Navegação Livre por todo o Catálogo',
+        badge: 'EXPLORAÇÃO LIVRE',
+      },
+    },
+  },
+  hero: {
+    originalBadge: 'PROJETO ORIGINAL JP',
+    match: 'de Relevância',
+    exploreButton: 'Explorar Projeto',
+    moreInfoButton: 'Mais Informações',
+    soundOn: 'Ativar áudio',
+    soundOff: 'Desativar áudio',
+    loading: 'Carregando catálogo cinematográfico...',
+    liveProduction: 'PROD',
+  },
+  rails: {
+    top10Title: 'Top 10 Projetos no Brasil Hoje',
+    top10Subtitle: 'Os repositórios mais visitados e avaliados',
+    popularTitle: 'Populares no Studio',
+    popularSubtitle: 'Séries de desenvolvimento com maior repercussão',
+    backendTitle: 'Séries de Back-End & Python',
+    backendSubtitle: 'Arquitetura de microsserviços, automação e dados',
+    frontendTitle: 'Front-End & UI Engineering',
+    frontendSubtitle: 'Interfaces cinematográficas com React 19 e Tailwind CSS',
+    viewAll: 'Ver todos',
+  },
+  modal: {
+    architecture: 'Visão Geral & Arquitetura',
+    specs: 'Ficha Técnica',
+    openGithub: 'Ver no GitHub',
+    fullPage: 'Abrir Página Completa',
+    stars: 'Estrelas',
+    forks: 'Forks',
+    license: 'Licença',
+    mainLanguage: 'Linguagem Principal',
+    lastUpdate: 'Última Atualização',
+    close: 'Fechar',
+    originalProject: 'PROJETO ORIGINAL',
+  },
+  footer: {
+    questions: 'Dúvidas sobre os projetos? Entre em contato.',
+    serviceCode: 'Código do Serviço: JP-2026',
+    copyright: '© 2026 João Pedro Sá — Portfólio Netflix Edition. Checkpoint 3 FIAP.',
+    columns: {
+      col1Title: 'Auditoria & Navegação',
+      col2Title: 'Tecnologias do Studio',
+      col3Title: 'Termos & Qualidade',
+      col4Title: 'Redes & Conexões',
+    },
+  },
+  theme: {
+    toggle: 'Alternar tema claro/escuro',
+    light: 'Tema Claro',
+    dark: 'Tema Escuro',
+  },
+  lang: {
+    label: 'Idioma',
+    pt: 'Português',
+    en: 'English',
+  },
+  contact: {
+    badge: 'Central de Atendimento a Recrutadores & Produção',
+    title: 'Vamos criar o próximo grande lançamento juntos?',
+    subtitle: 'Envie propostas de contratação, parcerias técnicas ou dúvidas sobre a arquitetura dos projetos. As mensagens chegam diretamente ao Studio.',
+    nameLabel: 'Seu Nome Completo',
+    namePlaceholder: 'Ex.: Mariana Silva (Tech Recruiter / Engenharia)',
+    emailLabel: 'Seu E-mail Corporativo ou Pessoal',
+    emailPlaceholder: 'mariana@empresa.com',
+    subjectLabel: 'Assunto do Contato',
+    subjectPlaceholder: 'Ex.: Oportunidade Front-End React / Parceria Técnica',
+    messageLabel: 'Mensagem ou Briefing da Proposta',
+    messagePlaceholder: 'Olá João Pedro, acompanhei seu portfólio no Studio e gostaria de conversar sobre...',
+    minChars: 'caracteres mínimos',
+    sendButton: 'Transmitir Mensagem ao Studio',
+    sendingButton: 'Transmitindo Mensagem...',
+    successMessage: 'Mensagem transmitida com sucesso! Notificação enviada e arquivada no Dashboard do Studio.',
+    directChannelsTitle: 'Canais Oficiais de Produção',
+    directChannelsSubtitle: 'Para respostas imediatas ou agendamento de reuniões técnicas:',
+    githubCard: 'Repositórios & Commits',
+    linkedinCard: 'Conexão Profissional',
+    emailCard: 'E-mail Profissional',
+    locationCard: 'Base Operacional',
+    securityNote: 'Mensagens processadas de forma segura e sincronizadas com o banco de dados do Studio com fallback local automático.',
+  },
+  dashboard: {
+    studioBadge: 'Studio Admin Hub',
+    title: 'Central de Operações & Curadoria',
+    subtitle: 'Gestão dos títulos em destaque no Billboard principal e monitoramento da caixa de entrada de recrutadores.',
+    cloudStatus: 'Supabase Conectado',
+    localStatus: 'Armazenamento Local',
+    signOut: 'Encerrar Sessão',
+    statsTotalRepos: 'Títulos no Catálogo',
+    statsFeatured: 'Destaques no Billboard',
+    statsTotalMessages: 'Mensagens Recebidas',
+    statsPending: 'Aguardando Resposta',
+    tabMessages: 'Caixa de Entrada de Recrutadores',
+    tabFeatured: 'Curadoria de Destaques (Top 6 Billboard)',
+    filterAll: 'Todas',
+    filterUnread: 'Pendentes',
+    filterReplied: 'Respondidas',
+    emptyMessagesTitle: 'Nenhuma mensagem recebida ainda',
+    emptyMessagesDesc: 'Quando recrutadores ou visitantes enviarem o formulário da Central de Contato, as mensagens aparecerão organizadas aqui.',
+    markReplied: 'Marcar como Respondida',
+    markUnread: 'Marcar como Pendente',
+    deleteMsg: 'Excluir Mensagem',
+    statusPending: 'Pendente',
+    statusReplied: 'Respondida',
+    curationTitle: 'Curadoria do Billboard da Home',
+    curationSubtitle: 'Escolha até 6 projetos para compor o carrossel Billboard hero da Home, que alternará automaticamente a cada 5 segundos.',
+    searchRepoPlaceholder: 'Filtrar repositório por título ou tecnologia...',
+    maxLimitReached: 'Limite de 6 projetos em destaque atingido. Desmarque um projeto antes de adicionar outro.',
+    viewOnGithub: 'Ver repositório no GitHub',
+    featuredBadge: 'NO AR NO BILLBOARD',
+    addToFeatured: 'Destacar no Billboard',
+    removeFromFeatured: 'Remover do Billboard',
+  },
+}
+
+const enTranslations: Translations = {
+  nav: {
+    home: 'Home',
+    projects: 'Series & Projects',
+    contact: 'Contact',
+    dashboard: 'My List (Studio)',
+    searchPlaceholder: 'Search projects, languages, stacks...',
+    switchProfile: 'Switch Profile',
+    signOut: 'Sign Out',
+    signIn: 'Sign In',
+    studioAccount: 'Studio Account',
+  },
+  auth: {
+    signInTab: 'Sign In',
+    signUpTab: 'Sign Up',
+    whosWatchingTab: "Who's watching?",
+    signInTitle: 'Sign In to Studio',
+    signInSubtitle: 'Access the portal for technical curation, title management, and metrics.',
+    signUpTitle: 'Create Studio Account',
+    signUpSubtitle: 'Register to customize your experience, bookmark titles, and receive updates.',
+    nameLabel: 'Full Name',
+    emailLabel: 'Email',
+    passwordLabel: 'Password',
+    confirmPasswordLabel: 'Confirm Password',
+    rememberMe: 'Remember me',
+    signInButton: 'Sign In to Studio',
+    signUpButton: 'Complete Registration',
+    authenticating: 'Authenticating session...',
+    creatingAccount: 'Setting up your access...',
+    demoButton: 'Fill evaluation credentials (1-Click)',
+    guestButton: 'Continue as Guest',
+    alreadyHaveAccount: 'Already have a Studio account?',
+    dontHaveAccount: 'New to the Studio?',
+    signUpNow: 'Sign up now.',
+    signInNow: 'Sign in to your account.',
+    baasProvider: 'BaaS Provider:',
+    supabaseCloud: 'Supabase Cloud',
+    demoMode: 'Demo Mode',
+    backToHome: 'Back to main catalog',
+    passwordMismatch: 'Passwords do not match. Please try again.',
+    accountCreatedSuccess: 'Account successfully created! Choose your profile to continue.',
+  },
+  profiles: {
+    title: "Who's watching?",
+    subtitle: 'Choose a profile to customize the catalog and engineering rails to your taste:',
+    manageButton: 'Manage Profiles',
+    doneButton: 'Done',
+    clickToEnter: 'Click to access catalog',
+    list: {
+      recruiter: {
+        title: 'Tech Recruiter',
+        subtitle: 'HR, Skill Assessment & Hiring Pipeline',
+        badge: 'EXECUTIVE VIEW',
+      },
+      engineer: {
+        title: 'Software Engineer',
+        subtitle: 'Architecture, Clean Code, Testing & APIs',
+        badge: 'CODE & TECH',
+      },
+      fiap: {
+        title: 'FIAP Evaluator',
+        subtitle: 'CP3 Academic Grading & Web Excellence',
+        badge: 'PROFESSOR & GRADE 10',
+      },
+      admin: {
+        title: 'Owner / Studio Admin',
+        subtitle: 'Project Curation & Message Management',
+        badge: 'FULL ACCESS',
+      },
+      guest: {
+        title: 'Guest Explorer',
+        subtitle: 'Free Exploration Across Full Catalog',
+        badge: 'OPEN ACCESS',
+      },
+    },
+  },
+  hero: {
+    originalBadge: 'JP ORIGINAL PROJECT',
+    match: 'Match',
+    exploreButton: 'Explore Project',
+    moreInfoButton: 'More Info',
+    soundOn: 'Enable sound',
+    soundOff: 'Disable sound',
+    loading: 'Loading cinematic catalog...',
+    liveProduction: 'PROD',
+  },
+  rails: {
+    top10Title: 'Top 10 Projects in Brazil Today',
+    top10Subtitle: 'Most visited and highly rated repositories',
+    popularTitle: 'Popular on Studio',
+    popularSubtitle: 'Trending software development series',
+    backendTitle: 'Back-End & Python Series',
+    backendSubtitle: 'Microservices architecture, automation and data pipelines',
+    frontendTitle: 'Front-End & UI Engineering',
+    frontendSubtitle: 'Cinematic web applications with React 19 & Tailwind CSS',
+    viewAll: 'View all',
+  },
+  modal: {
+    architecture: 'Overview & Architecture',
+    specs: 'Technical Specifications',
+    openGithub: 'View on GitHub',
+    fullPage: 'Open Full Page',
+    stars: 'Stars',
+    forks: 'Forks',
+    license: 'License',
+    mainLanguage: 'Primary Language',
+    lastUpdate: 'Last Updated',
+    close: 'Close',
+    originalProject: 'ORIGINAL PROJECT',
+  },
+  footer: {
+    questions: 'Questions about the projects? Get in touch.',
+    serviceCode: 'Service Code: JP-2026',
+    copyright: '© 2026 João Pedro Sá — Netflix Edition Portfolio. FIAP Checkpoint 3.',
+    columns: {
+      col1Title: 'Audit & Navigation',
+      col2Title: 'Studio Technologies',
+      col3Title: 'Terms & Quality',
+      col4Title: 'Connect & Network',
+    },
+  },
+  theme: {
+    toggle: 'Toggle light/dark theme',
+    light: 'Light Theme',
+    dark: 'Dark Theme',
+  },
+  lang: {
+    label: 'Language',
+    pt: 'Português',
+    en: 'English',
+  },
+  contact: {
+    badge: 'Recruiter & Production Help Center',
+    title: 'Ready to build the next blockbuster together?',
+    subtitle: 'Send hiring proposals, technical partnerships, or questions regarding project architecture. Messages land directly in the Studio.',
+    nameLabel: 'Your Full Name',
+    namePlaceholder: 'E.g. Jane Doe (Tech Recruiter / Engineering)',
+    emailLabel: 'Corporate or Personal Email',
+    emailPlaceholder: 'jane@company.com',
+    subjectLabel: 'Subject',
+    subjectPlaceholder: 'E.g. Front-End React Opportunity / Technical Partnership',
+    messageLabel: 'Message or Project Briefing',
+    messagePlaceholder: 'Hi João Pedro, I followed your work on Studio and would like to talk about...',
+    minChars: 'min characters',
+    sendButton: 'Transmit Message to Studio',
+    sendingButton: 'Transmitting Message...',
+    successMessage: 'Message transmitted successfully! Notification dispatched and archived in Studio Dashboard.',
+    directChannelsTitle: 'Official Production Channels',
+    directChannelsSubtitle: 'For immediate responses or scheduling technical calls:',
+    githubCard: 'Repositories & Commits',
+    linkedinCard: 'Professional Network',
+    emailCard: 'Professional Email',
+    locationCard: 'Operational Base',
+    securityNote: 'Securely processed messages synchronized with Studio database with automatic local fallback.',
+  },
+  dashboard: {
+    studioBadge: 'Studio Admin Hub',
+    title: 'Operations Center & Curation',
+    subtitle: 'Manage featured titles on the main Billboard and monitor the recruiter inbox.',
+    cloudStatus: 'Supabase Connected',
+    localStatus: 'Local Storage',
+    signOut: 'Sign Out',
+    statsTotalRepos: 'Titles in Catalog',
+    statsFeatured: 'Billboard Featured',
+    statsTotalMessages: 'Messages Received',
+    statsPending: 'Pending Response',
+    tabMessages: 'Recruiter Inbox',
+    tabFeatured: 'Billboard Curation (Top 6)',
+    filterAll: 'All',
+    filterUnread: 'Pending',
+    filterReplied: 'Responded',
+    emptyMessagesTitle: 'No messages received yet',
+    emptyMessagesDesc: 'When recruiters or visitors submit the Help Center form, their messages will appear organized here.',
+    markReplied: 'Mark as Responded',
+    markUnread: 'Mark as Pending',
+    deleteMsg: 'Delete Message',
+    statusPending: 'Pending',
+    statusReplied: 'Responded',
+    curationTitle: 'Home Billboard Curation',
+    curationSubtitle: 'Choose up to 6 projects for the Home Billboard hero carousel, which will rotate automatically every 5 seconds.',
+    searchRepoPlaceholder: 'Filter repository by title or tech stack...',
+    maxLimitReached: 'Limit of 6 featured projects reached. Deselect a project before adding another.',
+    viewOnGithub: 'View repository on GitHub',
+    featuredBadge: 'LIVE ON BILLBOARD',
+    addToFeatured: 'Feature on Billboard',
+    removeFromFeatured: 'Remove from Billboard',
+  },
+}
+
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(STORAGE_LANG_KEY) as Language | null
+      if (saved === 'pt' || saved === 'en') return saved
+      // Detect browser language
+      if (navigator.language?.startsWith('pt')) return 'pt'
+    }
+    return 'pt'
+  })
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_LANG_KEY, language)
+    document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en-US'
+  }, [language])
+
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang)
+  }, [])
+
+  const toggleLanguage = useCallback(() => {
+    setLanguageState(prev => (prev === 'pt' ? 'en' : 'pt'))
+  }, [])
+
+  const t = useMemo(() => {
+    return language === 'en' ? enTranslations : ptTranslations
+  }, [language])
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  )
+}
+
