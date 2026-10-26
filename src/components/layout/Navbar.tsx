@@ -107,6 +107,7 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: t.nav.home, path: '/' },
+    { name: t.nav.about, path: '/sobre' },
     { name: t.nav.projects, path: '/projetos' },
     { name: t.nav.contact, path: '/contato' },
     { name: t.nav.dashboard, path: '/dashboard' },
@@ -123,8 +124,8 @@ export const Navbar: React.FC = () => {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md shadow-lg border-b border-zinc-200/60 dark:border-white/10'
-          : 'bg-gradient-to-b from-white/95 via-white/70 to-transparent dark:from-black/90 dark:via-black/50 dark:to-transparent'
+          ? 'bg-white/95 dark:bg-[#141414]/98 backdrop-blur-md shadow-md shadow-black/10 dark:shadow-black/70'
+          : 'bg-gradient-to-b from-white/90 via-white/50 to-transparent dark:from-black/80 dark:via-black/40 dark:to-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-[68px] flex items-center justify-between gap-4">
@@ -132,16 +133,21 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-6 lg:gap-8">
           <Link
             to="/"
-            className="flex items-center gap-2 group select-none"
-            aria-label="João Pedro — Início"
+            className="flex items-center gap-2.5 group select-none"
+            aria-label="João Pedro Sá — Portfólio Início"
           >
             {/* Emblema N / JP Vermelho Netflix */}
             <div className="w-7 h-7 rounded-xs bg-[#E50914] flex items-center justify-center text-white font-black text-base tracking-tighter shadow-sm shadow-red-600/40 group-hover:scale-105 transition-transform">
               JP
             </div>
-            <span className="font-black text-lg sm:text-xl tracking-tight text-[#E50914] uppercase">
-              JOÃO PEDRO
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-black text-lg sm:text-xl tracking-tight text-[#E50914] uppercase">
+                JOÃO PEDRO SÁ
+              </span>
+              <span className="hidden sm:inline-block text-[10px] font-bold tracking-widest text-zinc-500 dark:text-[#a3a3a3] uppercase border-l border-zinc-300 dark:border-white/20 pl-2">
+                PORTFÓLIO
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

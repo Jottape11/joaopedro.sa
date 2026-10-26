@@ -6,6 +6,7 @@ import { SuspenseWrapper } from '@/components/common/SuspenseWrapper'
 
 // Code-splitting por rota via React.lazy() (Atende ao Requisito 8: carregamento sob demanda fora do pacote inicial)
 const Home = lazy(() => import('@/pages/Home').then(m => ({ default: m.Home })))
+const AboutMe = lazy(() => import('@/pages/AboutMe').then(m => ({ default: m.AboutMe })))
 const Projects = lazy(() => import('@/pages/Projects').then(m => ({ default: m.Projects })))
 const ProjectDetails = lazy(() => import('@/pages/ProjectDetails').then(m => ({ default: m.ProjectDetails })))
 const Contact = lazy(() => import('@/pages/Contact').then(m => ({ default: m.Contact })))
@@ -28,6 +29,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <Home />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'sobre',
+        element: (
+          <SuspenseWrapper>
+            <AboutMe />
           </SuspenseWrapper>
         ),
       },

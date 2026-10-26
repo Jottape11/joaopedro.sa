@@ -6,6 +6,7 @@ export interface Translations {
   nav: {
     home: string
     projects: string
+    about: string
     contact: string
     dashboard: string
     searchPlaceholder: string
@@ -188,6 +189,25 @@ export interface Translations {
     featuredBadge: string
     addToFeatured: string
     removeFromFeatured: string
+  }
+  about: {
+    badge: string
+    title: string
+    subtitle: string
+    role: string
+    university: string
+    continueToCatalog: string
+    greetingFor: string
+    skillsTitle: string
+    bioParagraph1: string
+    bioParagraph2: string
+    profileNotes: {
+      recruiter: string
+      engineer: string
+      fiap: string
+      admin: string
+      guest: string
+    }
   }
 }
 

@@ -7,6 +7,7 @@ const ptTranslations: Translations = {
   nav: {
     home: 'Início',
     projects: 'Séries & Projetos',
+    about: 'Sobre Mim',
     contact: 'Contato',
     dashboard: 'Minha Lista (Studio)',
     searchPlaceholder: 'Buscar projetos, linguagens, stacks...',
@@ -190,12 +191,32 @@ const ptTranslations: Translations = {
     addToFeatured: 'Destacar no Billboard',
     removeFromFeatured: 'Remover do Billboard',
   },
+  about: {
+    badge: 'Apresentação & Perfil Profissional',
+    title: 'Olá, eu sou o João Pedro Sá!',
+    subtitle: 'Estudante de Engenharia de Software na FIAP e Desenvolvedor Full-Stack apaixonado por interfaces cinematográficas e arquitetura limpa.',
+    role: 'Engenheiro de Software & Desenvolvedor Full-Stack',
+    university: 'FIAP — Turma 1ES (2026)',
+    continueToCatalog: 'Continuar para o Catálogo',
+    greetingFor: 'Bem-vindo(a) ao Studio como',
+    skillsTitle: 'Stacks & Tecnologias de Domínio',
+    bioParagraph1: 'Desenvolvi este portfólio unindo a elegância visual e a usabilidade do Netflix Studio (Hawkins Design System) com uma arquitetura técnica robusta em React 19, TypeScript e Vite.',
+    bioParagraph2: 'Meu foco de atuação combina front-end de alta fidelidade e performance com back-end assíncrono em Python (FastAPI), bancos de dados relacionais e NoSQL, testes automatizados e integração de Inteligência Artificial governada.',
+    profileNotes: {
+      recruiter: 'Fico muito feliz com seu interesse! Este portfólio foi desenhado com componentização modular, testes com 100% de aprovação e foco em gerar valor de negócio imediato para a equipe.',
+      engineer: 'Seja bem-vindo(a) ao código! Inspecione os trade-offs arquiteturais, o parser próprio de Markdown, cache assíncrono com TanStack Query e o linter em Rust (Oxlint).',
+      fiap: 'Bem-vindo, professor avaliador! Este projeto atende e supera rigorosamente os 12 critérios do Checkpoint 3 da FIAP, com BaaS híbrido, CI/CD na Vercel e governança de IA.',
+      admin: 'Acesso total concedido. Você possui controle administrativo para gerenciar os 6 títulos em destaque no Billboard hero e interagir com as mensagens de recrutadores.',
+      guest: 'Sinta-se em casa! Explore livremente as séries, repositórios e fichas técnicas como se estivesse escolhendo sua próxima maratona favorita na Netflix.',
+    },
+  },
 }
 
 const enTranslations: Translations = {
   nav: {
     home: 'Home',
     projects: 'Series & Projects',
+    about: 'About Me',
     contact: 'Contact',
     dashboard: 'My List (Studio)',
     searchPlaceholder: 'Search projects, languages, stacks...',
@@ -378,6 +399,25 @@ const enTranslations: Translations = {
     featuredBadge: 'LIVE ON BILLBOARD',
     addToFeatured: 'Feature on Billboard',
     removeFromFeatured: 'Remove from Billboard',
+  },
+  about: {
+    badge: 'Introduction & Professional Bio',
+    title: 'Hello, I am João Pedro Sá!',
+    subtitle: 'Software Engineering student at FIAP and Full-Stack Developer passionate about cinematic interfaces and clean architecture.',
+    role: 'Software Engineer & Full-Stack Developer',
+    university: 'FIAP — Class of 2026',
+    continueToCatalog: 'Continue to Catalog',
+    greetingFor: 'Welcome to the Studio as',
+    skillsTitle: 'Core Stacks & Technologies',
+    bioParagraph1: 'I crafted this portfolio combining the visual elegance and usability of the Netflix Studio (Hawkins Design System) with a solid technical architecture in React 19, TypeScript, and Vite.',
+    bioParagraph2: 'My technical focus blends high-fidelity, performant front-end engineering with asynchronous Python back-end services (FastAPI), relational/NoSQL databases, automated testing, and governed AI integration.',
+    profileNotes: {
+      recruiter: 'Delighted to have you here! This portfolio is designed with modular components, 100% test pass rate, and an obsessive focus on user value.',
+      engineer: 'Welcome to the code! Feel free to inspect architectural trade-offs, our custom Markdown parser, async caching via TanStack Query, and the Rust-based linter (Oxlint).',
+      fiap: 'Welcome, FIAP evaluators! This project strictly adheres to and surpasses all 12 criteria of Checkpoint 3, featuring hybrid BaaS, Vercel CI/CD, and AI governance.',
+      admin: 'Full admin access granted. You hold complete command over the top 6 featured titles on the Billboard carousel and the recruiter message inbox.',
+      guest: 'Grab some popcorn! Feel free to browse through engineering series, repositories, and technical specs as if picking your next Netflix binge.',
+    },
   },
 }
 

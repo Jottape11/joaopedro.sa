@@ -18,8 +18,10 @@ describe('Internacionalização i18n - LanguageContext (Requisito 6)', () => {
 
     expect(result.current.language).toBe('pt')
     expect(result.current.t.nav.home).toBe('Início')
+    expect(result.current.t.nav.about).toBe('Sobre Mim')
     expect(result.current.t.nav.projects).toBe('Séries & Projetos')
     expect(result.current.t.contact.badge).toBe('Central de Atendimento a Recrutadores & Produção')
+    expect(result.current.t.about.title).toBe('Olá, eu sou o João Pedro Sá!')
   })
 
   it('deve alternar para inglês e carregar traduções correspondentes', () => {
@@ -31,8 +33,10 @@ describe('Internacionalização i18n - LanguageContext (Requisito 6)', () => {
 
     expect(result.current.language).toBe('en')
     expect(result.current.t.nav.home).toBe('Home')
+    expect(result.current.t.nav.about).toBe('About Me')
     expect(result.current.t.nav.projects).toBe('Series & Projects')
     expect(result.current.t.contact.badge).toBe('Recruiter & Production Help Center')
+    expect(result.current.t.about.title).toBe('Hello, I am João Pedro Sá!')
   })
 
   it('deve alternar ciclicamente com toggleLanguage', () => {

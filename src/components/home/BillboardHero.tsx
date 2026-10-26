@@ -127,26 +127,29 @@ export const BillboardHero: React.FC<BillboardHeroProps> = ({ repos, onOpenDetai
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="relative w-full min-h-[520px] sm:min-h-[620px] md:min-h-[680px] bg-[var(--nf-bg)] text-[var(--nf-text)] flex items-center overflow-hidden select-none transition-colors duration-200"
+      className="relative w-full min-h-[580px] sm:min-h-[640px] md:min-h-[700px] lg:h-[82vh] lg:min-h-[720px] lg:max-h-[860px] bg-[var(--nf-bg)] text-[var(--nf-text)] flex items-center overflow-hidden select-none transition-colors duration-200"
     >
       {/* ── BACKGROUND POSTER (IMAGEM CINEMATOGRÁFICA REPRESENTATIVA) ── */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Imagem do Projeto no estilo Banner Netflix */}
+        {/* Imagem do Projeto em tela cheia no desktop com corte cinematográfico */}
         <img
           key={currentRepo.name}
           src={posterUrl}
           alt={currentRepo.name}
-          className="absolute right-0 top-0 w-full md:w-3/4 h-full object-cover object-center transition-all duration-700 ease-out scale-100 group-hover:scale-102"
+          className="absolute inset-0 w-full h-full object-cover object-center lg:object-[center_35%] transition-all duration-700 ease-out"
         />
 
-        {/* Gradiente Lateral Esquerdo Adaptável ao Tema */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--nf-bg)] via-[var(--nf-bg)]/95 sm:via-[var(--nf-bg)]/80 to-transparent w-full md:w-3/5 z-10 pointer-events-none transition-colors duration-200" />
+        {/* Overlay escuro sutil para garantir contraste em fotos claras */}
+        <div className="absolute inset-0 bg-black/25 dark:bg-black/40 z-5 pointer-events-none" />
 
-        {/* Gradiente Superior para integrar à Navbar */}
-        <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[var(--nf-bg)]/80 to-transparent z-10 pointer-events-none transition-colors duration-200" />
+        {/* Gradiente Lateral Esquerdo Adaptável ao Tema (protege leitura do texto) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--nf-bg)] via-[var(--nf-bg)]/85 sm:via-[var(--nf-bg)]/70 to-transparent w-full md:w-3/5 lg:w-1/2 z-10 pointer-events-none transition-colors duration-200" />
+
+        {/* Gradiente Superior para integrar à Navbar perfeitamente sem cortes */}
+        <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[var(--nf-bg)]/90 via-[var(--nf-bg)]/40 to-transparent z-10 pointer-events-none transition-colors duration-200" />
 
         {/* Gradiente Inferior para fundir com os trilhos Lolomo */}
-        <div className="absolute bottom-0 inset-x-0 h-44 bg-gradient-to-t from-[var(--nf-bg)] via-[var(--nf-bg)]/70 to-transparent z-10 pointer-events-none transition-colors duration-200" />
+        <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[var(--nf-bg)] via-[var(--nf-bg)]/80 to-transparent z-10 pointer-events-none transition-colors duration-200" />
       </div>
 
       {/* ── MANUAL NAVIGATION BUTTONS (CHEVRONS) ── */}
@@ -169,7 +172,7 @@ export const BillboardHero: React.FC<BillboardHeroProps> = ({ repos, onOpenDetai
       </button>
 
       {/* ── BILLBOARD MAIN CONTENT CARD ── */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-16 pb-20 flex flex-col justify-center space-y-4 sm:space-y-5">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-20 sm:pt-24 pb-20 sm:pb-28 flex flex-col justify-center space-y-4 sm:space-y-5">
         {/* Top Tagline / Selo de Originalidade Netflix */}
         <div className="flex items-center gap-2.5">
           <div className="w-6 h-6 rounded-xs bg-[#E50914] flex items-center justify-center text-white font-black text-sm tracking-tighter shadow-md shadow-red-700/40">

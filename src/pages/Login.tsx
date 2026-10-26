@@ -18,6 +18,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useLanguage } from '@/hooks/useLanguage'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
+import { WelcomeSection } from '@/components/common/WelcomeSection'
 
 export interface ProfileItem {
   id: string
@@ -65,10 +66,17 @@ export const Login: React.FC = () => {
   const { login, register, isCloudConnected } = useAuth()
   const { t } = useLanguage()
 
-  // Passo da tela: 'auth' (cadastro/login) ou 'profiles' (quem está assistindo)
+  // Passo da tela: 'auth' (cadastro/login) | 'profiles' (quem está assistindo) | 'welcome' (apresentação de boas-vindas)
   const requestedStep = searchParams.get('step')
-  const [stepState, setStepState] = useState<'auth' | 'profiles'>('auth')
-  const step = requestedStep === 'profiles' ? 'profiles' : stepState
+  const [stepState, setStepState] = useState<'auth' | 'profiles' | 'welcome'>(() => {
+    if (requestedStep === 'profiles') return 'profiles'
+    if (requestedStep === 'welcome') return 'welcome'
+    return 'auth'
+  })
+  const step =
+    (requestedStep === 'profiles' || requestedStep === 'welcome') && stepState === 'auth'
+      ? requestedStep
+      : stepState
   const setStep = setStepState
 
   // Modo dentro da etapa de autenticação: 'login' | 'signup'
@@ -147,14 +155,20 @@ export const Login: React.FC = () => {
     setStep('profiles')
   }
 
-  // Escolha do perfil
+  // Escolha do perfil: em vez de ir direto, apresenta a tela de Boas-Vindas com animação!
   const handleSelectProfile = (profileId: string) => {
     setSelectedProfile(profileId)
     localStorage.setItem('nf_active_profile', profileId)
-    localStorage.setItem('nf_profile_selected', 'true')
     window.dispatchEvent(new Event('nf-profile-change'))
 
-    // Redireciona para o catálogo principal (Home)
+    // Mostra a seção de Boas-Vindas & Apresentação
+    setStep('welcome')
+  }
+
+  // Conclui a seção de boas-vindas e entra no catálogo
+  const handleFinishWelcomeAndGoToCatalog = () => {
+    localStorage.setItem('nf_profile_selected', 'true')
+    window.dispatchEvent(new Event('nf-profile-change'))
     navigate('/', { replace: true })
   }
 
@@ -182,9 +196,14 @@ export const Login: React.FC = () => {
           <div className="w-8 h-8 rounded-xs bg-[#E50914] flex items-center justify-center text-white font-black text-lg tracking-tighter shadow-md shadow-red-600/40 group-hover:scale-105 transition-transform">
             JP
           </div>
-          <span className="font-black text-xl sm:text-2xl tracking-tight text-[#E50914] uppercase">
-            JOÃO PEDRO
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-black text-xl sm:text-2xl tracking-tight text-[#E50914] uppercase">
+              JOÃO PEDRO SÁ
+            </span>
+            <span className="hidden sm:inline-block text-[10px] font-bold tracking-widest text-zinc-500 dark:text-[#a3a3a3] uppercase border-l border-zinc-300 dark:border-white/20 pl-2">
+              PORTFÓLIO
+            </span>
+          </div>
         </Link>
 
         {/* Top Right Controls: Language Picker & Theme Switcher */}
@@ -564,10 +583,31 @@ export const Login: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => navigate('/')}
+                onClick={() => handleSelectProfile(selectedProfile)}
                 className="px-8 py-2.5 rounded-md bg-[#E50914] hover:bg-[#f40612] text-white text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer shadow-lg shadow-red-900/30"
               >
-                {t.hero.exploreButton} (Início) →
+                Avançar com {selectedProfile} →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════════
+            ETAPA 3: BOAS-VINDAS & APRESENTAÇÃO DE JOÃO PEDRO SÁ
+           ═══════════════════════════════════════════════════════════════ */}
+        {step === 'welcome' && (
+          <div className="w-full flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-500">
+            <WelcomeSection
+              activeProfileId={selectedProfile}
+              onContinue={handleFinishWelcomeAndGoToCatalog}
+            />
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setStep('profiles')}
+                className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                ← Trocar de Perfil ({t.nav.switchProfile})
               </button>
             </div>
           </div>

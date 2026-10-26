@@ -77,6 +77,17 @@ Frontend SPA (Vite + React 19 + TypeScript)
 - Caixa de mensagens com filtros (*Todas*, *Pendentes*, *Respondidas*), alternância de status e exclusão.
 - Curadoria em tempo real dos projetos em destaque no Billboard da Home (máximo de 6 projetos).
 
+### 7. Seção de Boas-Vindas & Sobre Mim (`/sobre` e Fluxo de Entrada)
+- Exibida com animação imediatamente após a escolha do perfil em *Quem está assistindo?* e também acessível a qualquer momento pelo menu de navegação do Header.
+- Apresentação personalizada de **João Pedro Sá** (formação FIAP 1ES 2026, foco Full-Stack com React 19, TypeScript, Python FastAPI e IA generativa).
+- Mensagem dedicada conforme o perfil selecionado (Recrutador, Engenharia, Avaliador FIAP, Admin e Visitante) e botão direto para continuar para o catálogo.
+
+### 8. Identidade Visual, Favicon & Header sem Artefatos de Scroll
+- Favicon personalizado em SVG com o monograma "JP" em estilo fita 3D da Netflix.
+- Título da aba padronizado para `João Pedro Sá | Portfólio`.
+- Header translúcido com sombra orgânica e sem bordas inferiores que pudessem criar linhas brancas indesejadas no scroll.
+
+
 ---
 
 ## 🧪 Suíte de Testes Automatizados (Vitest)
